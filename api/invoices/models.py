@@ -5,7 +5,7 @@ from django.db import models
 class Invoice(models.Model):
     customer = models.CharField(max_length=100)
     date = models.DateField(auto_now_add=True)
-    total_amount = models.DecimalField(max_digits=5, decimal_places=2)
+    total_amount = models.DecimalField(max_digits=13, decimal_places=2)
     total_quantity = models.IntegerField()
 
     def get_transactions(self):
@@ -39,8 +39,8 @@ class Invoice(models.Model):
 class Transaction(models.Model):
     product = models.CharField(max_length=100)
     quantity = models.IntegerField()
-    price = models.DecimalField(max_digits=5, decimal_places=2)
-    total = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=11, decimal_places=2)
+    total = models.DecimalField(max_digits=11, decimal_places=2)
     invoice = models.ForeignKey(Invoice, related_name='transactions')
 
     def save(self, *args, **kwargs):

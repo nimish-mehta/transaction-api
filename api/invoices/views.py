@@ -44,6 +44,8 @@ class InvoiceList(APIView):
 class InvoiceDetail(APIView):
 
     def get_object(self, pk):
+        """ Cache would be implemented Here
+        """
         try:
             return Invoice.objects.get(pk=pk)
         except Invoice.DoesNotExist:
