@@ -92,7 +92,7 @@ class APITest(TestCase):
             }
         ]
     }
-    url = "/invoice/"
+    url = "/invoices/"
     def test_post(self):
         client = APIClient()
         post_response = client.post(self.url, self.message, format='json')

@@ -4,6 +4,6 @@ import views
 
 
 urlpatterns = [
-    url(r'^invoice/$', views.InvoiceList.as_view()),
-    url(r'^invoice/(?P<pk>[0-9]+)/$', views.InvoiceDetail.as_view()),
+    url(r'^invoices/$', views.InvoiceList.as_view()),
+    url(r'^invoices/(?P<pk>[0-9]+)/$', views.InvoiceDetail.as_view()),
 ]
