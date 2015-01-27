@@ -6,9 +6,9 @@ from .models import Invoice, Transaction
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
+        fields = ('id', 'product', 'quantity', 'price', 'total')
 
-
-class InvoiceSerializer(serializers.Serializer):
+class InvoiceSerializer(serializers.ModelSerializer):
+    transactions = TransactionSerializer(many=True)
     class Meta:
         model = Invoice
-        fields = ('id', 'customer', 'transactions')
