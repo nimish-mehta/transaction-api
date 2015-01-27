@@ -3,32 +3,44 @@ from .serializers import InvoiceSerializer
 from rest_framework import generics, status
 from django.db import transaction as transaction_control
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
-class InvoiceList(generics.ListCreateAPIView):
-    queryset = Invoice.objects.all()
-    serializer_class = InvoiceSerializer
+class InvoiceList(APIView):
+    def get(self, request, format=None):
+        invoices = Invoice.objects.all()
+        serializer = InvoiceSerializer(invoices, many=True)
+        return Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        data = request.DATA
-        transaction_list = data.get('transactions', [])
-        transaction_save_list = []
+    def post(self, request, format=None):
+        data = request.data
+        serializer = InvoiceSerializer(data=data)
+        if serializer.is_valid():
+            invoice = self.save_invoice(data)
+            response_serializer = InvoiceSerializer(invoice)
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def save_invoice(self, data):
+        print data
+        transaction_list = data.get('transactions')
         customer = data.get('customer')
         with transaction_control.atomic():
-            invoice = Invoice(customer=customer)
-            invoice.save()
-            for transaction in transaction_list:
-                product = transaction.get('product')
-                quantity = transaction.get('quantity')
-                price = transaction.get('price')
-                transaction = Transaction(product=product, quantity=quantity,
-                                          price=price, invoice=invoice)
-                transaction.save()
-            invoice.save()
-        serialized_response = InvoiceSerializer(invoice)
-        print(serialized_response.data)
-        return Response(serialized_response.data, status.HTTP_201_CREATED)
+            inv = Invoice(customer=customer)
+            inv.save()
+            for t in transaction_list:
+                product = t.get('product')
+                quantity = t.get('quantity')
+                price = t.get('price')
+                transact = Transaction(invoice=inv,
+                                       product=product,
+                                       quantity=quantity, price=price)
+                transact.save()
+            inv.save()
+        return inv
+
+
 
 class InvoiceDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Invoice.objects.all()
-    serializers_class = InvoiceSerializer
+    serializer_class = InvoiceSerializer
