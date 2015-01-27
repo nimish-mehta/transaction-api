@@ -54,7 +54,6 @@ class InvoiceDetail(APIView):
         with transaction_control.atomic():
             inv = self.get_object(data.get('id'))
             for t in transaction_list:
-                print t
                 id = t.get('id')
                 transact = Transaction(pk=id)
                 transact.price = t.get('price')
